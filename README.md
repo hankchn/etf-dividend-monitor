@@ -91,7 +91,7 @@ etf-dividend-monitor/
     </td>
     <td align="center">
       <a href="https://claude.ai">
-        <img src="https://www.anthropic.com/images/icons/claude-ai-icon.png" width="64" height="64" style="border-radius:50%;" alt="Claude"/>
+        <img src="https://avatars.githubusercontent.com/u/76263028?s=200" width="64" height="64" style="border-radius:50%;" alt="Claude"/>
         <br />
         <sub><b>Claude</b></sub>
       </a>
