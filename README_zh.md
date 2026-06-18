@@ -76,7 +76,7 @@ etf-dividend-monitor/
 
 ## 作者
 
-- **Hank Yang** ([@hankyang](https://github.com/hankyang))
+- **Hank Yang** ([@hankchn](https://github.com/hankchn))
 - **Claude** (Anthropic) — AI 结对编程助手
 
 ## 许可证

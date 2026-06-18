@@ -78,7 +78,7 @@ Real-time quotes and historical K-line data are fetched from Tencent Finance API
 
 ## Authors
 
-- **Hank Yang** ([@hankyang](https://github.com/hankyang))
+- **Hank Yang** ([@hankchn](https://github.com/hankchn))
 - **Claude** (Anthropic) — AI pair programming assistant
 
 ## License
