@@ -1,86 +1,106 @@
-# ETF Dividend Monitor
+# etf-dividend-monitor
 
-A [CodeBuddy](https://www.codebuddy.ai) skill for automated dividend ETF investment signal monitoring and IMA knowledge base archiving.
+红利ETF定投监测与IMA知识库归档 — 一个 [CodeBuddy](https://www.codebuddy.ai) Skill。
 
-## Overview
+**简体中文** | [English](./README_en.md)
 
-This skill monitors 4 Chinese dividend ETFs using the MA250 (250-day Moving Average) deviation strategy, generates investment signals, saves results as Markdown files, and automatically archives them to the IMA knowledge base.
+## 概述
 
-## Monitored ETFs
+此 Skill 监控 4 只中国红利ETF，使用 MA250（250日均线）偏离度策略生成定投信号，将监测结果保存为 Markdown 文件，并自动上传到 IMA 知识库归档。
 
-| ETF Name | Code | Index |
-|----------|------|-------|
-| 红利低波100ETF博时 | 159307 | CSI Dividend Low Volatility 100 |
-| 红利低波ETF易方达 | 563020 | CSI Dividend Low Volatility |
-| 红利低波50ETF南方 | 515450 | CSI Dividend Low Volatility 50 |
-| 红利ETF易方达 | 515180 | CSI Dividend |
+## 监控标的
 
-## Signal Strategy
+| ETF名称 | 代码 | 跟踪指数 |
+|---------|------|----------|
+| 红利低波100ETF博时 | 159307 | 中证红利低波动100 |
+| 红利低波ETF易方达 | 563020 | 中证红利低波动 |
+| 红利低波50ETF南方 | 515450 | 中证红利低波动50 |
+| 红利ETF易方达 | 515180 | 中证红利 |
 
-The strategy is based on the deviation between current price and MA250:
+## 信号策略
 
-| Deviation Range | Signal Level | Recommendation |
-|----------------|--------------|----------------|
-| ≤ -10% | 🔴 Severely Undervalued | Strongly recommended to double DCA |
-| -10% ~ -5% | 🟠 Significantly Undervalued | Recommended to increase DCA amount |
-| -5% ~ -2% | 🟡 Slightly Undervalued | Recommended normal DCA |
-| -2% ~ 0% | 🟢 Below Average | Consider DCA |
-| > 0% | 😴 Above Average | Hold and wait |
+基于当前价格与 MA250 均线的偏离度判断：
 
-> DCA = Dollar Cost Averaging (定投)
+| 偏离度范围 | 信号等级 | 建议 |
+|-----------|---------|------|
+| ≤ -10% | 🔴 严重低估 | 强烈建议加倍定投 |
+| -10% ~ -5% | 🟠 明显低估 | 建议增加定投金额 |
+| -5% ~ -2% | 🟡 轻度低估 | 建议正常定投 |
+| -2% ~ 0% | 🟢 略低于均线 | 可考虑定投 |
+| > 0% | 😴 高于均线 | 持有观望 |
 
-## Workflow
+## 工作流程
 
-1. **Monitor** — Execute `check_dividend_etfs.py` to fetch real-time prices and calculate MA250 deviation
-2. **Save** — Save the full report as `红利ETF监控_YYYYMMDD.md`
-3. **Archive** — Upload the `.md` file to IMA knowledge base via OpenAPI (create_media → COS Upload → add_knowledge)
+1. **监测** — 执行 `check_dividend_etfs.py` 获取实时价格，计算 MA250 偏离度
+2. **保存** — 将完整报告保存为 `红利ETF监控_YYYYMMDD.md`
+3. **归档** — 通过 IMA OpenAPI 上传 `.md` 文件到知识库（create_media → COS 上传 → add_knowledge）
 
-## Prerequisites
+## 前置条件
 
-- Python 3 (no external packages required)
-- Node.js (for IMA upload scripts)
-- IMA credentials configured at `~/.config/ima/` (`client_id` and `api_key`)
-- [ima-skill](https://github.com/) installed at `~/.codebuddy/skills/ima-skill/`
+- Python 3（无需额外安装包）
+- Node.js（用于 IMA 上传脚本）
+- IMA 凭证已配置在 `~/.config/ima/`（`client_id` 和 `api_key`）
+- [ima-skill](https://github.com/) 已安装在 `~/.codebuddy/skills/ima-skill/`
 
-## Installation
+## 安装
 
-Place this skill in your CodeBuddy skills directory:
+将此 Skill 放置在 CodeBuddy skills 目录中：
 
 ```bash
-# User-level (available across all projects)
+# 用户级（所有项目可用）
 ~/.codebuddy/skills/etf-dividend-monitor/
 ```
 
-## Usage
+## 使用方式
 
-Trigger the skill by saying:
+通过以下方式触发：
 
 - "执行红利ETF监测"
 - "检查红利ETF定投信号"
 - "红利ETF定投检查"
 
-Or configure it as a CodeBuddy automation for scheduled execution (e.g., weekdays at 09:45).
+也可配置为 CodeBuddy 自动化任务，实现定时执行（如工作日 09:45）。
 
-## Project Structure
+## 项目结构
 
 ```
 etf-dividend-monitor/
-├── SKILL.md                         # Skill instructions for CodeBuddy
-├── README.md                        # This file (English)
-├── README_zh.md                     # Chinese README
+├── SKILL.md                         # Skill 指令文档（CodeBuddy 读取）
+├── README.md                        # 中文说明（本文件）
+├── README_en.md                     # English README
 └── scripts/
-    └── check_dividend_etfs.py       # Main monitoring script
+    └── check_dividend_etfs.py       # 主监测脚本
 ```
 
-## Data Source
+## 数据来源
 
-Real-time quotes and historical K-line data are fetched from Tencent Finance API (`qt.gtimg.cn` / `web.ifzq.gtimg.cn`).
+实时行情和历史K线数据来自腾讯财经接口（`qt.gtimg.cn` / `web.ifzq.gtimg.cn`）。
 
-## Authors
+## Contributors
 
-- **Hank Yang** ([@hankchn](https://github.com/hankchn))
-- **Claude** (Anthropic) — AI pair programming assistant
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/hankchn">
+        <img src="https://github.com/hankchn.png" width="64" height="64" style="border-radius:50%;" alt="hankchn"/>
+        <br />
+        <sub><b>hankchn</b></sub>
+      </a>
+      <br />
+      <sub>Hank Yang</sub>
+    </td>
+    <td align="center">
+      <a href="https://claude.ai">
+        <img src="https://www.anthropic.com/images/icons/claude-ai-icon.png" width="64" height="64" style="border-radius:50%;" alt="Claude"/>
+        <br />
+        <sub><b>Claude</b></sub>
+      </a>
+      <br />
+      <sub>Anthropic AI</sub>
+    </td>
+  </tr>
+</table>
 
-## License
+## 许可证
 
-MIT
+[MIT](./LICENSE)
