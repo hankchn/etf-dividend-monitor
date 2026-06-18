@@ -2,7 +2,7 @@
 
 红利ETF定投监测与IMA知识库归档 — 一个 [CodeBuddy](https://www.codebuddy.ai) Skill。
 
-**简体中文** | [English](./README_en.md)
+<p align="center"><b>简体中文</b> | <a href="./README_en.md">English</a></p>
 
 ## 概述
 

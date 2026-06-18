@@ -2,7 +2,7 @@
 
 Automated dividend ETF investment signal monitoring & IMA knowledge base archiving — a [CodeBuddy](https://www.codebuddy.ai) Skill.
 
-[简体中文](./README.md) | **English**
+<p align="center"><a href="./README.md">简体中文</a> | <b>English</b></p>
 
 ## Overview
 
