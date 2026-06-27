@@ -1,80 +1,102 @@
-# etf-dividend-monitor
-
-红利ETF定投监测与IMA知识库归档 — 一个 [CodeBuddy](https://www.codebuddy.ai) Skill。
-
 <p align="center"><b>简体中文</b> | <a href="./README_en.md">English</a></p>
 
-## 概述
+# etf-dividend-monitor
 
-此 Skill 监控 4 只中国红利ETF，使用 MA250（250日均线）偏离度策略生成定投信号，将监测结果保存为 Markdown 文件，并自动上传到 IMA 知识库归档。
+一句话说明：这个 Skill 帮你监控 4 只中国红利 ETF 的 MA250 偏离度，生成定投观察信号，并把结果保存为可归档的 Markdown 报告。
 
-## 监控标的
+## 这个版本能做什么
 
-| ETF名称 | 代码 | 跟踪指数 |
-|---------|------|----------|
-| 红利低波100ETF博时 | 159307 | 中证红利低波动100 |
-| 红利低波ETF易方达 | 563020 | 中证红利低波动 |
-| 红利低波50ETF南方 | 515450 | 中证红利低波动50 |
-| 红利ETF易方达 | 515180 | 中证红利 |
+- 获取 4 只红利 ETF 的实时价格和历史 K 线数据。
+- 计算 MA250 均线和当前价格偏离度。
+- 按偏离区间输出“严重低估、明显低估、轻度低估、略低于均线、高于均线”等观察信号。
+- 生成 `红利ETF监控_YYYYMMDD.md` 格式的 Markdown 报告。
+- 可结合 IMA OpenAPI，把每日报告归档到用户指定知识库和文件夹。
 
-## 信号策略
+## 适合谁
 
-基于当前价格与 MA250 均线的偏离度判断：
+- 需要定期观察红利 ETF 是否进入定投区间的个人投资者。
+- 想把每日监控结果沉淀到知识库里，方便回看和复盘的人。
+- 已经有 IMA 凭证，并希望把监控、保存、归档串成自动化流程的人。
 
-| 偏离度范围 | 信号等级 | 建议 |
-|-----------|---------|------|
-| ≤ -10% | 🔴 严重低估 | 强烈建议加倍定投 |
-| -10% ~ -5% | 🟠 明显低估 | 建议增加定投金额 |
-| -5% ~ -2% | 🟡 轻度低估 | 建议正常定投 |
-| -2% ~ 0% | 🟢 略低于均线 | 可考虑定投 |
-| > 0% | 😴 高于均线 | 持有观望 |
+## 使用示例
 
-## 工作流程
-
-1. **监测** — 执行 `check_dividend_etfs.py` 获取实时价格，计算 MA250 偏离度
-2. **保存** — 将完整报告保存为 `红利ETF监控_YYYYMMDD.md`
-3. **归档** — 通过 IMA OpenAPI 上传 `.md` 文件到知识库（create_media → COS 上传 → add_knowledge）
-
-## 前置条件
-
-- Python 3（无需额外安装包）
-- Node.js（用于 IMA 上传脚本）
-- IMA 凭证已配置在 `~/.config/ima/`（`client_id` 和 `api_key`）
-- [ima-skill](https://github.com/) 已安装在 `~/.codebuddy/skills/ima-skill/`
-
-## 安装
-
-将此 Skill 放置在 CodeBuddy skills 目录中：
+运行监控脚本：
 
 ```bash
-# 用户级（所有项目可用）
-~/.codebuddy/skills/etf-dividend-monitor/
+python3 scripts/check_dividend_etfs.py
 ```
 
-## 使用方式
+示例输出会包含：
 
-通过以下方式触发：
-
-- "执行红利ETF监测"
-- "检查红利ETF定投信号"
-- "红利ETF定投检查"
-
-也可配置为 CodeBuddy 自动化任务，实现定时执行（如工作日 09:45）。
-
-## 项目结构
-
-```
-etf-dividend-monitor/
-├── SKILL.md                         # Skill 指令文档（CodeBuddy 读取）
-├── README.md                        # 中文说明（本文件）
-├── README_en.md                     # English README
-└── scripts/
-    └── check_dividend_etfs.py       # 主监测脚本
+```text
+红利ETF监控
+- ETF 名称
+- 当前价格
+- MA250
+- 偏离度
+- 观察信号
 ```
 
-## 数据来源
+如果配置了归档流程，报告会保存为 Markdown 文件，再上传到用户指定的 IMA 知识库。
 
-实时行情和历史K线数据来自腾讯财经接口（`qt.gtimg.cn` / `web.ifzq.gtimg.cn`）。
+## 快速开始
+
+安装为 Codex Skill：
+
+```bash
+git clone https://github.com/hankchn/etf-dividend-monitor.git
+mkdir -p ~/.codex/skills/etf-dividend-monitor
+cp -R etf-dividend-monitor/{SKILL.md,scripts} ~/.codex/skills/etf-dividend-monitor/
+```
+
+手动运行：
+
+```bash
+cd ~/.codex/skills/etf-dividend-monitor
+python3 scripts/check_dividend_etfs.py
+```
+
+在 Agent 中触发：
+
+```text
+执行红利ETF监测
+```
+
+## 常见用法
+
+- 工作日上午固定时间运行，生成当天观察报告。
+- 只查看脚本输出，用于人工判断是否需要继续研究。
+- 配置 IMA 凭证后，把 Markdown 报告归档到指定知识库。
+- 将报告作为每日投资观察记录，不直接作为买卖指令。
+
+## 当前限制
+
+- 数据来自腾讯财经接口，接口不可用或字段变化时脚本可能失败。
+- 非交易日拿到的通常是上一交易日数据。
+- MA250 偏离度只是观察信号，不等于投资建议。
+- IMA 上传需要用户在本机配置凭证，并通过知识库名称和文件夹名称定位目标位置。
+
+## 安全与隐私说明
+
+- 不要把 IMA `client_id`、`api_key`、知识库 ID、folder ID 或上传凭证提交到仓库。
+- 本仓库不应写死个人知识库标识；归档目标应由用户配置或运行时查找。
+- 监控结果仅供个人研究和复盘，不构成投资建议。
+
+## 技术实现
+
+- `scripts/check_dividend_etfs.py` 获取行情、计算 MA250 并输出监控结果。
+- `SKILL.md` 描述 Agent 工作流、报告命名和 IMA 归档步骤。
+- Markdown 报告可供知识库、笔记系统或版本化复盘使用。
+
+## Roadmap
+
+- 增加更多 ETF 配置方式。
+- 增加失败重试和数据源降级。
+- 增加历史信号回测和命中率评估。
+
+## License
+
+[MIT](./LICENSE)
 
 ## Contributors
 
@@ -82,7 +104,7 @@ etf-dividend-monitor/
   <tr>
     <td align="center">
       <a href="https://github.com/hankchn">
-        <img src="https://github.com/hankchn.png" width="64" height="64" style="border-radius:50%;" alt="hankchn"/>
+        <img src="https://github.com/hankchn.png" width="64" height="64" style="border-radius:50%;" alt="hankchn" />
         <br />
         <sub><b>hankchn</b></sub>
       </a>
@@ -90,17 +112,13 @@ etf-dividend-monitor/
       <sub>Hank Yang</sub>
     </td>
     <td align="center">
-      <a href="https://claude.ai">
-        <img src="https://avatars.githubusercontent.com/u/76263028?s=200" width="64" height="64" style="border-radius:50%;" alt="Claude"/>
+      <a href="https://openai.com/codex">
+        <img src="https://github.com/openai.png" width="64" height="64" style="border-radius:50%;" alt="Codex" />
         <br />
-        <sub><b>Claude</b></sub>
+        <sub><b>Codex</b></sub>
       </a>
       <br />
-      <sub>Anthropic AI</sub>
+      <sub>OpenAI Codex</sub>
     </td>
   </tr>
 </table>
-
-## 许可证
-
-[MIT](./LICENSE)

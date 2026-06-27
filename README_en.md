@@ -1,82 +1,102 @@
-# etf-dividend-monitor
-
-Automated dividend ETF investment signal monitoring & IMA knowledge base archiving — a [CodeBuddy](https://www.codebuddy.ai) Skill.
-
 <p align="center"><a href="./README.md">简体中文</a> | <b>English</b></p>
 
-## Overview
+# etf-dividend-monitor
 
-This skill monitors 4 Chinese dividend ETFs using the MA250 (250-day Moving Average) deviation strategy, generates investment signals, saves results as Markdown files, and automatically archives them to the IMA knowledge base.
+One-line summary: this Skill monitors the MA250 deviation of four Chinese dividend ETFs, generates dollar-cost-averaging observation signals, and saves the result as an archivable Markdown report.
 
-## Monitored ETFs
+## What this version can do
 
-| ETF Name | Code | Index |
-|----------|------|-------|
-| 红利低波100ETF博时 | 159307 | CSI Dividend Low Volatility 100 |
-| 红利低波ETF易方达 | 563020 | CSI Dividend Low Volatility |
-| 红利低波50ETF南方 | 515450 | CSI Dividend Low Volatility 50 |
-| 红利ETF易方达 | 515180 | CSI Dividend |
+- Fetch current prices and historical K-line data for four dividend ETFs.
+- Calculate the MA250 moving average and current-price deviation.
+- Output observation levels such as severe undervaluation, clear undervaluation, mild undervaluation, slightly below average, or above average.
+- Generate a Markdown report named `红利ETF监控_YYYYMMDD.md`.
+- Optionally archive the daily report to a user-specified IMA knowledge base and folder through IMA OpenAPI.
 
-## Signal Strategy
+## Who it is for
 
-The strategy is based on the deviation between current price and MA250:
+- Individual investors who want a regular signal for whether dividend ETFs are below a long-term moving average.
+- Users who want to keep daily monitoring records in a knowledge base for later review.
+- Users who already have IMA credentials and want to automate monitoring, saving, and archiving.
 
-| Deviation Range | Signal Level | Recommendation |
-|----------------|--------------|----------------|
-| ≤ -10% | 🔴 Severely Undervalued | Strongly recommended to double DCA |
-| -10% ~ -5% | 🟠 Significantly Undervalued | Recommended to increase DCA amount |
-| -5% ~ -2% | 🟡 Slightly Undervalued | Recommended normal DCA |
-| -2% ~ 0% | 🟢 Below Average | Consider DCA |
-| > 0% | 😴 Above Average | Hold and wait |
+## Usage example
 
-> DCA = Dollar Cost Averaging (定投)
-
-## Workflow
-
-1. **Monitor** — Execute `check_dividend_etfs.py` to fetch real-time prices and calculate MA250 deviation
-2. **Save** — Save the full report as `红利ETF监控_YYYYMMDD.md`
-3. **Archive** — Upload the `.md` file to IMA knowledge base via OpenAPI (create_media → COS Upload → add_knowledge)
-
-## Prerequisites
-
-- Python 3 (no external packages required)
-- Node.js (for IMA upload scripts)
-- IMA credentials configured at `~/.config/ima/` (`client_id` and `api_key`)
-- [ima-skill](https://github.com/) installed at `~/.codebuddy/skills/ima-skill/`
-
-## Installation
-
-Place this skill in your CodeBuddy skills directory:
+Run the monitor:
 
 ```bash
-# User-level (available across all projects)
-~/.codebuddy/skills/etf-dividend-monitor/
+python3 scripts/check_dividend_etfs.py
 ```
 
-## Usage
+Example output includes:
 
-Trigger the skill by saying:
-
-- "执行红利ETF监测"
-- "检查红利ETF定投信号"
-- "红利ETF定投检查"
-
-Or configure it as a CodeBuddy automation for scheduled execution (e.g., weekdays at 09:45).
-
-## Project Structure
-
-```
-etf-dividend-monitor/
-├── SKILL.md                         # Skill instructions for CodeBuddy
-├── README.md                        # Chinese README (default)
-├── README_en.md                     # This file (English)
-└── scripts/
-    └── check_dividend_etfs.py       # Main monitoring script
+```text
+Dividend ETF monitor
+- ETF name
+- Current price
+- MA250
+- Deviation
+- Observation signal
 ```
 
-## Data Source
+If archiving is configured, the report is saved as Markdown and uploaded to the user's selected IMA knowledge base.
 
-Real-time quotes and historical K-line data are fetched from Tencent Finance API (`qt.gtimg.cn` / `web.ifzq.gtimg.cn`).
+## Quick start
+
+Install as a Codex Skill:
+
+```bash
+git clone https://github.com/hankchn/etf-dividend-monitor.git
+mkdir -p ~/.codex/skills/etf-dividend-monitor
+cp -R etf-dividend-monitor/{SKILL.md,scripts} ~/.codex/skills/etf-dividend-monitor/
+```
+
+Run manually:
+
+```bash
+cd ~/.codex/skills/etf-dividend-monitor
+python3 scripts/check_dividend_etfs.py
+```
+
+Trigger through an agent:
+
+```text
+Run the dividend ETF monitor.
+```
+
+## Common uses
+
+- Run on weekday mornings to create a daily observation report.
+- Read the script output as a research signal before doing further analysis.
+- Configure IMA credentials and archive Markdown reports to a selected knowledge base.
+- Use the report as a personal observation log, not as an automatic trading instruction.
+
+## Current limitations
+
+- Data comes from Tencent Finance endpoints; endpoint outages or field changes may break the script.
+- On non-trading days, data usually reflects the previous trading day.
+- MA250 deviation is an observation signal, not investment advice.
+- IMA upload requires local credentials and should resolve the target by knowledge-base and folder name at runtime.
+
+## Security and privacy
+
+- Do not commit IMA `client_id`, `api_key`, knowledge-base IDs, folder IDs, or upload credentials.
+- This repository should not hardcode personal knowledge-base identifiers; archive targets should come from user configuration or runtime lookup.
+- Monitoring output is for personal research and review only, and is not investment advice.
+
+## Technical notes
+
+- `scripts/check_dividend_etfs.py` fetches market data, calculates MA250, and prints the monitoring result.
+- `SKILL.md` describes the agent workflow, report naming, and IMA archiving process.
+- Markdown reports can be used in a knowledge base, note system, or versioned review workflow.
+
+## Roadmap
+
+- Add configurable ETF lists.
+- Add retry and fallback data-source behavior.
+- Add historical signal backtesting and hit-rate review.
+
+## License
+
+[MIT](./LICENSE)
 
 ## Contributors
 
@@ -84,7 +104,7 @@ Real-time quotes and historical K-line data are fetched from Tencent Finance API
   <tr>
     <td align="center">
       <a href="https://github.com/hankchn">
-        <img src="https://github.com/hankchn.png" width="64" height="64" style="border-radius:50%;" alt="hankchn"/>
+        <img src="https://github.com/hankchn.png" width="64" height="64" style="border-radius:50%;" alt="hankchn" />
         <br />
         <sub><b>hankchn</b></sub>
       </a>
@@ -92,17 +112,13 @@ Real-time quotes and historical K-line data are fetched from Tencent Finance API
       <sub>Hank Yang</sub>
     </td>
     <td align="center">
-      <a href="https://claude.ai">
-        <img src="https://avatars.githubusercontent.com/u/76263028?s=200" width="64" height="64" style="border-radius:50%;" alt="Claude"/>
+      <a href="https://openai.com/codex">
+        <img src="https://github.com/openai.png" width="64" height="64" style="border-radius:50%;" alt="Codex" />
         <br />
-        <sub><b>Claude</b></sub>
+        <sub><b>Codex</b></sub>
       </a>
       <br />
-      <sub>Anthropic AI</sub>
+      <sub>OpenAI Codex</sub>
     </td>
   </tr>
 </table>
-
-## License
-
-[MIT](./LICENSE)

@@ -46,16 +46,11 @@ cd "<SKILL_DIR>/scripts" && python3 check_dividend_etfs.py
 
 使用 IMA OpenAPI 将 .md 文件上传到指定知识库文件夹。
 
-#### 默认配置
+#### 归档目标
 
-| 配置项 | 值 |
-|--------|-----|
-| 知识库名称 | 慢慢变富 |
-| 知识库 ID | `91Mcw6synURbJFcmN_UhuBeCn3f_BzqVwYgaxVoyyDA=` |
-| 文件夹名称 | 红利etf每日监控 |
-| 文件夹 ID | `folder_7449729088620411` |
+默认按用户指定的知识库名称和文件夹名称执行。不要在仓库中写死个人 `knowledge_base_id`、`folder_id`、`media_id` 或上传凭证。
 
-> 如果用户指定了其他知识库或文件夹，按用户指定的执行。
+执行上传前应先按名称查询可用知识库和文件夹；如果名称不完全匹配，列出候选项并向用户确认最近的真实目标，不能猜测 ID。
 
 #### 上传流程
 
@@ -90,7 +85,7 @@ curl -s -X POST "https://ima.qq.com/openapi/wiki/v1/create_media" \
     "file_name": "<文件名>",
     "file_size": <字节数>,
     "content_type": "text/markdown",
-    "knowledge_base_id": "91Mcw6synURbJFcmN_UhuBeCn3f_BzqVwYgaxVoyyDA=",
+    "knowledge_base_id": "<resolved_knowledge_base_id>",
     "file_ext": "md"
   }'
 ```
@@ -124,8 +119,8 @@ curl -s -X POST "https://ima.qq.com/openapi/wiki/v1/add_knowledge" \
     "media_type": 7,
     "media_id": "<media_id>",
     "title": "<文件名>",
-    "knowledge_base_id": "91Mcw6synURbJFcmN_UhuBeCn3f_BzqVwYgaxVoyyDA=",
-    "folder_id": "folder_7449729088620411",
+    "knowledge_base_id": "<resolved_knowledge_base_id>",
+    "folder_id": "<resolved_folder_id>",
     "file_info": {
       "cos_key": "<cos_credential.cos_key>",
       "file_size": <字节数>,
